@@ -46,6 +46,8 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="css/styleback.css"> <!-- Asegúrate de que el archivo CSS esté presente -->
+
+    <link rel="icon" href="favicon.ico">
 </head>
 <body>
     <div class="container-centered">

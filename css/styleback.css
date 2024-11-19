@@ -96,7 +96,7 @@ body, html {
 
 /* Formularios Centrados */
 .container-centered {
-    max-width: 400px;
+    max-width: 1000px;
     margin: 50px auto;
     padding: 20px;
     background-color: #ffffff;
@@ -165,7 +165,7 @@ body, html {
 
 .btn-submit:hover,
 .btn:hover {
-    background-color: #45a049;
+    background-color: #457ba0;
 }
 
 /* Botón de Volver */
@@ -226,7 +226,6 @@ table td {
 /* Formulario de Búsqueda */
 form {
     margin-bottom: 20px;
-    display: flex;
     gap: 10px;
     justify-content: center;
 }
@@ -239,7 +238,7 @@ form input[type="text"] {
     border-radius: 4px;
 }
 
-form .btn-submit, form .btn-clear {
+form .Buscar, form .btn-clear {
     background-color: #4CAF50;
     color: #fff;
     padding: 10px 20px;
@@ -249,10 +248,15 @@ form .btn-submit, form .btn-clear {
     cursor: pointer;
     transition: background-color 0.3s;
     text-decoration: none;
+    display: inline;
+
 }
 
 form .btn-clear {
-    background-color: #333;
+    background-color: rgb(41, 40, 40);
+    
+    justify-content: center;
+    
 }
 
 form .btn-submit:hover {

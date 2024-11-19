@@ -64,7 +64,7 @@ $category_result = $conn->query($category_query);
             <!-- Formulario de búsqueda -->
             <form action="inventory.php" method="post" style="margin-bottom: 20px;">
                 <input type="text" name="search" placeholder="Buscar producto por nombre" value="<?php echo htmlspecialchars($search_term); ?>">
-                <button type="submit" class="btn-submit">Buscar</button>
+                <button type="submit" class="Buscar">Buscar</button>
                 <a href="inventory.php" class="btn-clear">Limpiar Búsqueda</a>
             </form>
 
