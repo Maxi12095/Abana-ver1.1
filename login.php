@@ -6,7 +6,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Llamar al proceso almacenado UserLogin
+    // Llamar al procedimiento almacenado UserLogin
     $stmt = $conn->prepare("CALL UserLogin(?)");
     $stmt->bind_param("s", $username);
     $stmt->execute();
@@ -45,27 +45,53 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="css/styleback.css"> <!-- Asegúrate de que el archivo CSS esté presente -->
-
-    <link rel="icon" href="favicon.ico">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styleback.css"> <!-- Estilos personalizados -->
 </head>
 <body>
-    <div class="container-centered">
-        <h2>Iniciar Sesión</h2>
-        <?php if (isset($error_message)): ?>
-            <p class="error"><?php echo $error_message; ?></p>
-        <?php endif; ?>
-        <form action="login.php" method="post">
-            <div class="form-group">
-                <label for="username">Nombre de Usuario:</label>
-                <input type="text" id="username" name="username" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Contraseña:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit" class="btn-submit">Iniciar Sesión</button>
-        </form>
+    <div class="container-fluid bg-primary text-white py-3 text-center">
+        <h1>Bienvenido</h1>
+        <p>Inicia sesión para continuar</p>
     </div>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white text-center">
+                        <h4>Iniciar Sesión</h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Mensajes de error -->
+                        <?php if (isset($error_message)): ?>
+                            <div class="alert alert-danger text-center">
+                                <?php echo $error_message; ?>
+                            </div>
+                        <?php endif; ?>
+
+                        <!-- Formulario de inicio de sesión -->
+                        <form action="login.php" method="post">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Nombre de Usuario:</label>
+                                <input type="text" id="username" name="username" class="form-control" placeholder="Escribe tu usuario" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Contraseña:</label>
+                                <input type="password" id="password" name="password" class="form-control" placeholder="Escribe tu contraseña" required>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-success">Iniciar Sesión</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-footer text-center">
+                        <p class="mb-0">¿Olvidaste tu contraseña? <a href="recover_password_user.php" class="text-primary">Recupérala aquí</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

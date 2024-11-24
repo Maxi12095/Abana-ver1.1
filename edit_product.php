@@ -24,8 +24,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $qty = $_POST['qty'];
     $fk_category = $_POST['fk_category'];
 
-    // Consulta SQL para actualizar el producto
-    $query = "UPDATE products SET Product = ?, Description = ?, Price = ?, Qty = ?, fk_category = ? WHERE ID_Product = ?";
+    // Llamar al procedimiento almacenado para actualizar el producto
+    $query = "CALL UpdateProduct(?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("ssdiii", $product, $description, $price, $qty, $fk_category, $product_id);
 
@@ -38,19 +38,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
 }
 
-// Obtener los datos del producto
-$query = "SELECT * FROM products WHERE ID_Product = ?";
+// Llamar al procedimiento almacenado para obtener los datos del producto
+$query = "CALL GetProductById(?)";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $product_id);
 $stmt->execute();
 $result = $stmt->get_result();
 $product = $result->fetch_assoc();
+$stmt->close();
 
 // Obtener las categorías para el dropdown
 $category_query = "SELECT ID_Category, Category_Name FROM categories";
 $categories = $conn->query($category_query);
-
-$stmt->close();
 ?>
 
 <!DOCTYPE html>
@@ -59,50 +58,81 @@ $stmt->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Producto</title>
-    <link rel="stylesheet" href="css/styleback.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container-centered">
-        <h2>Editar Producto</h2>
-        <!-- Mensajes de éxito o error -->
-        <?php if (isset($success_message)): ?>
-            <p class="success"><?php echo $success_message; ?></p>
-        <?php elseif (isset($error_message)): ?>
-            <p class="error"><?php echo $error_message; ?></p>
-        <?php endif; ?>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h4>Editar Producto</h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Mensajes de éxito o error -->
+                        <?php if (isset($success_message)): ?>
+                            <div class="alert alert-success text-center">
+                                <?php echo $success_message; ?>
+                            </div>
+                        <?php elseif (isset($error_message)): ?>
+                            <div class="alert alert-danger text-center">
+                                <?php echo $error_message; ?>
+                            </div>
+                        <?php endif; ?>
 
-        <!-- Formulario para editar producto -->
-        <form action="edit_product.php?id=<?php echo $product_id; ?>" method="post">
-            <div class="form-group">
-                <label for="product">Nombre del Producto:</label>
-                <input type="text" id="product" name="product" value="<?php echo htmlspecialchars($product['Product']); ?>" required>
+                        <!-- Formulario para editar producto -->
+                        <form action="edit_product.php?id=<?php echo $product_id; ?>" method="post">
+                            <div class="row g-3">
+                                <!-- Nombre del Producto -->
+                                <div class="col-md-12">
+                                    <label for="product" class="form-label">Nombre del Producto:</label>
+                                    <input type="text" id="product" name="product" value="<?php echo htmlspecialchars($product['Product']); ?>" class="form-control" required>
+                                </div>
+
+                                <!-- Descripción -->
+                                <div class="col-md-12">
+                                    <label for="description" class="form-label">Descripción:</label>
+                                    <input type="text" id="description" name="description" value="<?php echo htmlspecialchars($product['Description']); ?>" class="form-control" required>
+                                </div>
+
+                                <!-- Precio -->
+                                <div class="col-md-6">
+                                    <label for="price" class="form-label">Precio:</label>
+                                    <input type="number" step="0.01" id="price" name="price" value="<?php echo htmlspecialchars($product['Price']); ?>" class="form-control" required>
+                                </div>
+
+                                <!-- Cantidad -->
+                                <div class="col-md-6">
+                                    <label for="qty" class="form-label">Cantidad:</label>
+                                    <input type="number" id="qty" name="qty" value="<?php echo htmlspecialchars($product['Qty']); ?>" class="form-control" required>
+                                </div>
+
+                                <!-- Categoría -->
+                                <div class="col-md-12">
+                                    <label for="fk_category" class="form-label">Categoría:</label>
+                                    <select id="fk_category" name="fk_category" class="form-select" required>
+                                        <?php while ($row = $categories->fetch_assoc()): ?>
+                                            <option value="<?php echo $row['ID_Category']; ?>" <?php echo $row['ID_Category'] == $product['fk_category'] ? 'selected' : ''; ?>>
+                                                <?php echo htmlspecialchars($row['Category_Name']); ?>
+                                            </option>
+                                        <?php endwhile; ?>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Botones -->
+                            <div class="mt-4 d-flex justify-content-between">
+                                <button type="submit" class="btn btn-success">Guardar Cambios</button>
+                                <a href="inventory.php" class="btn btn-secondary">Volver al Inventario</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="description">Descripción:</label>
-                <input type="text" id="description" name="description" value="<?php echo htmlspecialchars($product['Description']); ?>" required>
-            </div>
-            <div class="form-group">
-                <label for="price">Precio:</label>
-                <input type="number" step="0.01" id="price" name="price" value="<?php echo htmlspecialchars($product['Price']); ?>" required>
-            </div>
-            <div class="form-group">
-                <label for="qty">Cantidad:</label>
-                <input type="number" id="qty" name="qty" value="<?php echo htmlspecialchars($product['Qty']); ?>" required>
-            </div>
-            <div class="form-group">
-                <label for="fk_category">Categoría:</label>
-                <select id="fk_category" name="fk_category" required>
-                    <?php while ($row = $categories->fetch_assoc()): ?>
-                        <option value="<?php echo $row['ID_Category']; ?>" <?php echo $row['ID_Category'] == $product['fk_category'] ? 'selected' : ''; ?>>
-                            <?php echo htmlspecialchars($row['Category_Name']); ?>
-                        </option>
-                    <?php endwhile; ?>
-                </select>
-            </div>
-            <button type="submit" class="btn-submit">Guardar Cambios</button>
-            <a href="inventory.php" class="btn-back">Volver al Inventario</a>
-        </form>
+        </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
 

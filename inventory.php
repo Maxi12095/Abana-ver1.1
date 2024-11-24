@@ -1,4 +1,4 @@
-<?php
+<?php 
 session_start();
 include 'config.php';
 
@@ -43,36 +43,60 @@ $category_result = $conn->query($category_query);
     <link rel="stylesheet" href="css/styleback.css">
 </head>
 <body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="user-info">
+                Bienvenido, <strong><?php echo htmlspecialchars($_SESSION['username']); ?></strong>
+            </div>
+            <div class="logout-container">
+                <a href="logout.php" class="btn-logout">Cerrar Sesión</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Botón para mostrar/ocultar la Sidebar -->
+    <button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
+
     <div class="wrapper">
         <!-- Sidebar -->
-        <aside class="sidebar">
-            <h2>Admin Panel</h2>
+        <aside class="sidebar" id="sidebar">
+            <h2>Menú</h2>
             <nav>
                 <ul>
-                    <li><a href="admin_dashboard.php">Dashboard de Usuarios</a></li>
+                    <?php if ($_SESSION['role'] == 1): // Mostrar solo si el usuario es administrador ?>
+                        <li><a href="admin_dashboard.php">Panel de Administrador</a></li>
+                    <?php endif; ?>
                     <li><a href="inventory.php">Inventario</a></li>
-                    <li><a href="logout.php" class="logout">Cerrar Sesión</a></li>
+                    <li><a href="configure_security_questions.php">Configurar Preguntas de Seguridad</a></li>
+                    <li><a href="change_password.php">Cambiar Contraseña</a></li> <!-- Nuevo botón -->
                 </ul>
             </nav>
         </aside>
 
         <!-- Contenido principal -->
-        <div class="main-content">
-            <h1>Inventario de Productos</h1>
-            <p>Bienvenido, <?php echo htmlspecialchars($_SESSION['username']); ?></p>
+        <div class="main-content" id="main-content">
+            <h1 class="page-title">Inventario de Productos</h1>
+            <p class="welcome-message">Usa las opciones de búsqueda para filtrar los productos.</p>
 
             <!-- Formulario de búsqueda -->
-            <form action="inventory.php" method="post" style="margin-bottom: 20px;">
-                <input type="text" name="search" placeholder="Buscar producto por nombre" value="<?php echo htmlspecialchars($search_term); ?>">
-                <button type="submit" class="Buscar">Buscar</button>
-                <a href="inventory.php" class="btn-clear">Limpiar Búsqueda</a>
+            <form action="inventory.php" method="post" class="search-form">
+                <input 
+                    type="text" 
+                    name="search" 
+                    placeholder="Buscar producto por nombre" 
+                    value="<?php echo htmlspecialchars($search_term); ?>" 
+                    class="search-input"
+                >
+                <button type="submit" class="btn btn-search">Buscar</button>
+                <a href="inventory.php" class="btn btn-clear">Limpiar Búsqueda</a>
             </form>
 
-            <!-- Botón de añadir producto -->
-            <a href="add_product.php" class="btn">Añadir Nuevo Producto</a>
-
-            <!-- Botón de añadir categoría -->
-            <a href="add_category.php" class="btn">Añadir Nueva Categoría</a>
+            <!-- Botones generales -->
+            <div class="button-container">
+                <a href="add_product.php" class="btn">Añadir Nuevo Producto</a>
+                <a href="add_category.php" class="btn">Añadir Nueva Categoría</a>
+            </div>
 
             <!-- Tabla de productos -->
             <h2>Productos</h2>
@@ -131,8 +155,21 @@ $category_result = $conn->query($category_query);
             </table>
         </div>
     </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const header = document.querySelector('.header');
+            
+            sidebar.classList.toggle('hidden');
+            mainContent.classList.toggle('collapsed');
+            header.classList.toggle('expanded');
+        }
+    </script>
 </body>
 </html>
+
 
 <?php
 $conn->close();

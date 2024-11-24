@@ -12,10 +12,12 @@ body, html {
     color: #333;
 }
 
-/* Estructura General */
+/* General */
 .wrapper {
     display: flex;
     height: 100vh;
+    transition: margin-left 0.3s ease-in-out;
+    overflow-x: hidden; /* Evita scroll horizontal */
 }
 
 /* Sidebar */
@@ -26,6 +28,17 @@ body, html {
     padding: 20px;
     display: flex;
     flex-direction: column;
+    position: fixed;
+    height: 100%;
+    left: 0;
+    top: 0;
+    transform: translateX(0); /* Visible por defecto */
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
+}
+
+.sidebar.hidden {
+    transform: translateX(-100%); /* Ocultar */
 }
 
 .sidebar h2 {
@@ -72,6 +85,76 @@ body, html {
     background-color: #c0392b;
 }
 
+/* Botón para mostrar/ocultar la Sidebar */
+.toggle-sidebar-btn {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1100; /* Encima de la sidebar */
+    transition: background-color 0.3s ease;
+}
+
+.toggle-sidebar-btn:hover {
+    background-color: #45a049;
+}
+
+/* Header */
+.header {
+    width: calc(100% - 250px); /* Ajuste por la sidebar visible */
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 250px; /* Posición con la sidebar visible */
+    z-index: 1000;
+    transition: all 0.3s ease-in-out;
+}
+
+.header.expanded {
+    width: 100%; /* Ancho completo cuando la sidebar está oculta */
+    left: 0; /* Ajustar posición */
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.user-info {
+    font-size: 16px;
+}
+
+.logout-container {
+    margin-left: auto;
+}
+
+.btn-logout {
+    background-color: #e74c3c;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-logout:hover {
+    background-color: #c0392b;
+}
+
 /* Contenido Principal */
 .main-content {
     flex: 1;
@@ -80,72 +163,17 @@ body, html {
     background-color: #ffffff;
     border-radius: 8px;
     margin: 20px;
+    margin-left: 270px; /* Ajuste por la sidebar visible */
+    margin-top: 60px; /* Espacio reservado para el header */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: margin-left 0.3s ease-in-out;
 }
 
-.main-content h1 {
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 20px;
+.main-content.collapsed {
+    margin-left: 20px; /* Ajuste cuando la sidebar está oculta */
 }
 
-.main-content p {
-    color: #555;
-    margin-bottom: 20px;
-}
-
-/* Formularios Centrados */
-.container-centered {
-    max-width: 1000px;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-.container-centered h2 {
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 20px;
-}
-
-/* Formulario General */
-.form-group {
-    margin-bottom: 15px;
-    text-align: left;
-    display: flex;
-    flex-direction: column;
-}
-
-.form-group label {
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #555;
-}
-
-.form-group input[type="text"],
-.form-group input[type="number"],
-.form-group input[type="password"],
-.form-group select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-size: 16px;
-}
-
-.form-group input[type="text"]:focus,
-.form-group input[type="number"]:focus,
-.form-group input[type="password"]:focus,
-.form-group select:focus {
-    border-color: #66afe9;
-    outline: none;
-}
-
-/* Botones */
+/* Botones Generales */
 .btn-submit,
 .btn {
     background-color: #4CAF50;
@@ -160,7 +188,7 @@ body, html {
     text-decoration: none;
     display: inline-block;
     margin: 10px 0;
-    width: 100%;
+    width: auto;
 }
 
 .btn-submit:hover,
@@ -178,7 +206,6 @@ body, html {
     border-radius: 4px;
     transition: background-color 0.3s;
     margin-top: 10px;
-    width: 100%;
     text-align: center;
 }
 
@@ -186,22 +213,52 @@ body, html {
     background-color: #555;
 }
 
-/* Mensajes de Éxito y Error */
-.success {
-    color: #4CAF50;
-    font-weight: bold;
-    margin-top: 15px;
+/* Formulario */
+.container-centered {
+    max-width: 400px;
+    margin: 100px auto 0; /* Ajustado para que no colisione con el header */
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
 
-.error {
-    color: #e74c3c;
-    font-weight: bold;
-    margin-top: 15px;
-    text-align: center;
+.container-centered h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
 }
 
-/* Tabla de Resultados */
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.form-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.form-group input[type="text"],
+.form-group input[type="password"],
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="password"]:focus {
+    border-color: #66afe9;
+    outline: none;
+}
+
+/* Tablas */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -227,7 +284,8 @@ table td {
 form {
     margin-bottom: 20px;
     gap: 10px;
-    justify-content: center;
+    display: flex;
+    justify-content: flex-start;
 }
 
 form input[type="text"] {
@@ -238,7 +296,7 @@ form input[type="text"] {
     border-radius: 4px;
 }
 
-form .Buscar, form .btn-clear {
+form .btn-search, form .btn-clear {
     background-color: #4CAF50;
     color: #fff;
     padding: 10px 20px;
@@ -249,20 +307,66 @@ form .Buscar, form .btn-clear {
     transition: background-color 0.3s;
     text-decoration: none;
     display: inline;
-
 }
 
 form .btn-clear {
     background-color: rgb(41, 40, 40);
-    
-    justify-content: center;
-    
-}
-
-form .btn-submit:hover {
-    background-color: #45a049;
 }
 
 form .btn-clear:hover {
     background-color: #555;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.hidden {
+        transform: translateX(0);
+    }
+
+    .header {
+        width: 100%;
+        left: 0;
+    }
+
+    .main-content {
+        margin-left: 20px;
+    }
+
+    .toggle-sidebar-btn {
+        left: 15px;
+    }
+
+    form {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    form input[type="text"], form .btn-search, form .btn-clear {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .user-info {
+        margin-bottom: 10px;
+    }
+
+    .btn-logout {
+        width: 100%;
+        text-align: center;
+    }
+
+    table th, table td {
+        font-size: 14px;
+        padding: 5px;
+    }
 }
