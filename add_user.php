@@ -12,7 +12,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $firstname = $_POST['firstname'];
     $lastname = $_POST['lastname'];
     $username = $_POST['username'];
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT); // Hasheamos la contraseña
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT); 
+    // Hasheando la contraseña
     $role = $_POST['role'];
 
     // Llamar al procedimiento almacenado AddUser
