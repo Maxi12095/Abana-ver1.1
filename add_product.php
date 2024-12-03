@@ -15,11 +15,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $price = $_POST['price'];
     $qty = $_POST['qty'];
     $fk_category = $_POST['fk_category'];
+    $sku = $_POST['sku'];  // SKU personalizado
 
-    // Consulta SQL para insertar el producto (ID_Product lo maneja el trigger)
-    $query = "INSERT INTO products (Product, Description, Price, Qty, fk_category) VALUES (?, ?, ?, ?, ?)";
+    // Llamar al procedimiento almacenado AddProduct
+    $query = "CALL AddProduct(?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("ssdii", $product, $description, $price, $qty, $fk_category);
+    $stmt->bind_param("ssdiss", $product, $description, $price, $qty, $fk_category, $sku);
 
     if ($stmt->execute()) {
         $success_message = "Producto agregado exitosamente.";
@@ -92,6 +93,10 @@ $categories = $conn->query($category_query);
                                         </option>
                                     <?php endwhile; ?>
                                 </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="sku" class="form-label">SKU (Código de barras):</label>
+                                <input type="number" id="sku" name="sku" class="form-control" required>
                             </div>
                             <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-success">Añadir Producto</button>

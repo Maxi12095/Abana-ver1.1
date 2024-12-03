@@ -23,19 +23,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $price = $_POST['price'];
     $qty = $_POST['qty'];
     $fk_category = $_POST['fk_category'];
+    $sku = $_POST['sku']; // SKU recibido desde el formulario
 
-    // Llamar al procedimiento almacenado para actualizar el producto
-    $query = "CALL UpdateProduct(?, ?, ?, ?, ?, ?)";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("ssdiii", $product, $description, $price, $qty, $fk_category, $product_id);
-
-    if ($stmt->execute()) {
-        $success_message = "Producto actualizado exitosamente.";
+    // Validación de datos (Asegurarse de que el precio y cantidad sean números válidos)
+    if (!is_numeric($price)) {
+        $error_message = "El precio debe ser un número válido.";
+    } elseif (!is_numeric($qty)) {
+        $error_message = "La cantidad debe ser un número válido.";
     } else {
-        $error_message = "Error al actualizar el producto: " . $stmt->error;
-    }
+        // Llamar al procedimiento almacenado para actualizar el producto
+        $query = "CALL UpdateProduct(?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($query);
 
-    $stmt->close();
+        // Bind parameters con los tipos correctos
+        $stmt->bind_param("ssdiiis", $product, $description, $price, $qty, $fk_category, $sku, $product_id);
+
+        if ($stmt->execute()) {
+            $success_message = "Producto actualizado exitosamente.";
+        } else {
+            $error_message = "Error al actualizar el producto: " . $stmt->error;
+        }
+
+        $stmt->close();
+    }
 }
 
 // Llamar al procedimiento almacenado para obtener los datos del producto
@@ -53,7 +63,7 @@ $categories = $conn->query($category_query);
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -105,6 +115,12 @@ $categories = $conn->query($category_query);
                                 <div class="col-md-6">
                                     <label for="qty" class="form-label">Cantidad:</label>
                                     <input type="number" id="qty" name="qty" value="<?php echo htmlspecialchars($product['Qty']); ?>" class="form-control" required>
+                                </div>
+
+                                <!-- SKU -->
+                                <div class="col-md-12">
+                                    <label for="sku" class="form-label">SKU:</label>
+                                    <input type="text" id="sku" name="sku" value="<?php echo htmlspecialchars($product['SKU']); ?>" class="form-control" required>
                                 </div>
 
                                 <!-- Categoría -->
