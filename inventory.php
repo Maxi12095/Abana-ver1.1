@@ -177,23 +177,6 @@ while ($category = $category_result->fetch_assoc()) {
                             </div>
                         </form>
                         <br>
-
-                        <!-- Formulario de búsqueda por ID -->
-                        <form class="row g-3" method="post" action="inventory.php">
-                            <div class="col-md-8">
-                                <input 
-                                    type="number" 
-                                    name="search_id" 
-                                    class="form-control" 
-                                    placeholder="Buscar producto por ID" 
-                                    value="<?php echo htmlspecialchars($search_id); ?>">
-                            </div>
-                            <div class="col-md-4 d-flex">
-                                <button type="submit" class="btn btn-primary me-2">Buscar por ID</button>
-                                <a href="inventory.php" class="btn btn-secondary">Limpiar Búsqueda</a>
-                            </div>
-                        </form>
-                        <br>
                     </div>
                 </div>
 
